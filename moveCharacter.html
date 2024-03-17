@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    html,
+    body {
+      margin: 0;
+      overflow: hidden;
+      position: relative;
+      user-select: none;
+      font-family: 'Arial', sans-serif;
+    }
+
+    #load {
+      position: fixed;
+      width: 100vw;
+      height: 100vh;
+      top: 0;
+      left: 0;
+      background: blue;
+      z-index: 1;
+    }
+
+    .button {
+      width: 50px;
+      height: 50px;
+      margin: 2px;
+      border: 2px solid #ccc;
+      text-align: center;
+      line-height: 50px;
+      cursor: pointer;
+    }
+
+    .direction-key {
+      background-color: #b3d9ff;
+      /* Light blue for direction keys */
+    }
+
+    #character {
+      width: 10vw;
+      height: 10vw;
+      background-color: blue;
+      position: absolute;
+    }
+
+    #map {
+      display: flex;
+    }
+
+    #directionButtons {
+      position: fixed;
+      top: calc(100vh - 174px);
+      left: 2px;
+      width: calc(150px + 4px * 6);
+      height: calc(150px + 4px * 6);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #coordinate {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      padding: 5px;
+      font-size: 3vw;
+      background-color: rgb(200, 200, 200, 0.5);
+    }
+
+    .block {
+      width: 10vw;
+      height: 10vw;
+      background-color: greenyellow;
+    }
+
+    #guide {
+      display: none;
+    }
+
+    #body {
+      width: 210vw;
+      height: 210vw;
+    }
+
+    #advertisement {
+      width: 40vw;
+      height: 40vw;
+      position: fixed;
+      top: 10vh;
+      left: 10px;
+    }
+
+    #setting {
+      width: calc(5vw + 24px);
+      height: calc(5vw + 24px);
+      margin-left: calc(100vw - 5vw - 24px);
+      position: fixed;
+      top: 0;
+      left: 0;
+      background-color: #fff;
+    }
+
+    /**#settingClose {
+      width: calc(5vw + 24px);
+      height: calc(5vw + 24px);
+      margin-left: calc(100vw - 5vw - 24px);
+      position: fixed;
+      right: 0;
+      background-color: tomato;
+    }**/
+
+    #settingClose {
+      background-color: tomato;
+      border: 2px solid black;
+      width: calc(5vw + 20px);
+      height: calc(5vw + 20px);
+      font-size: 3vw;
+      font-weight: bold;
+      line-height: calc(5vw + 20px);
+      text-align: center;
+      position: absolute;
+      right: 0;
+    }
+
+    #settingContent div {
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+    }
+
+    #settingContent div h4 {
+      width: 30vw;
+      height: 5vw;
+      line-height: 5vw;
+      border-right: 2px solid black;
+      background-color: rgb(200, 200, 200, 0.5);
+      text-align: center;
+    }
+
+    #settingContent div div {
+      margin: 0 auto;
+    }
+
+    #arrowKeys div {
+      display: inline-block;
+      width: 10vw;
+      height: 10vw;
+      line-height: 10vw;
+      cursor: pointer;
+      background-color: #b3d9ff;
+      border: 2px solid black;
+      text-align: center;
+    }
+
+    @media (orientation: portrait) {
+
+      #guide {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        background-color: black;
+        color: white;
+      }
+
+      #body {
+        display: none;
+      }
+    }
+  </style>
+  <title>Directional Keys</title>
+</head>
+
+<body style="margin: 0;" oncontextmenu="return false" onselectstart="return false" ondragstart="return false"
+  onkeydown="return false">
+  <div id="load"></div>
+  <div id="guide">
+    <div>
+      가로모드로 전환해주세요
+    </div>
+  </div>
+  <div id="body">
+    <div id="character"></div>
+    <a href="https://playstore.me/45083d4" style="display: none;"><img id="advertisement"
+        src="https://i.ibb.co/HHJy85W/b806b036a51699930017.jpg"></a>
+    <img onclick="settingOpen();" id="setting" src="https://cdn-icons-png.flaticon.com/512/2040/2040504.png">
+    <div id="map">
+    </div>
+    <div id="coordinate">좌표: <span></span></div>
+    <div id="directionButtons">
+      <div id="up" class="button direction-key" ontouchmove="handleTouchMove(event)"
+        ontouchstart="handleTouchStart(event)" ontouchend="handleTouchEnd(event)">▲</div>
+      <div style="display: flex;">
+        <div id="left" class="button direction-key" ontouchmove="handleTouchMove(event)"
+          ontouchstart="handleTouchStart(event)" ontouchend="handleTouchEnd(event)">◀</div>
+        <div class="button direction-key">◀</div>
+        <div id="right" class="button direction-key" ontouchmove="handleTouchMove(event)"
+          ontouchstart="handleTouchStart(event)" ontouchend="handleTouchEnd(event)">▶</div>
+      </div>
+      <div id="down" class="button direction-key" ontouchmove="handleTouchMove(event)"
+        ontouchstart="handleTouchStart(event)" ontouchend="handleTouchEnd(event)">▼</div>
+    </div>
+    <div id="settingPage" style="display: none;">
+      <div id="settingPageContent"
+        style="background-color: rgb(0, 0, 0, 0.5); width: 100vw; height: 100vh; position: fixed; top: 0; left: 0;">
+
+        <div id="settingClose" onclick="document.getElementById('settingPage').style.display='none';">
+          X</div>
+
+        <div id="settingContent"
+          style="background-color: white; width: 100vw; height: calc(100vh - 5vw - 24px); position: absolute; top: calc(5vw + 24px); font-size: 3vw;">
+          <div id="arrowKeys">
+            <h4>방향키 위치 조정</h4>
+            <div>▲</div>
+            <div>▼</div>
+            <div>◀</div>
+            <div>▶</div>
+          </div>
+
+          <div>
+            <h4>전체화면</h4>
+            <div><button onclick="lockFullscreen();">전환</button></div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+
+
+
+
+  </div>
+
+  <script>
+
+    UI("게임설명", "랜덤으로 소환되는 보물을 찾아다니는 게임입니다.\n보물을 먹으면서 점수를 얻어봅시다.\n\n<span style='color: grey;'>* 캐릭터 위치가 이상할 경우 재접속하시고, 방향키 위치가 브라우저에 따라 다르게 표시될 수 있습니다. 브라우저를 전체 화면으로 설정하거나, 우측 상단에 위치한 설정에서 방향키의 위치를 변경할 수 있으니, 브라우저에 맞춰 변경해주세요.</span>")
+    const upButton = document.getElementById('up');
+    const leftButton = document.getElementById('left');
+    const rightButton = document.getElementById('right');
+    const downButton = document.getElementById('down');
+    function settingOpen() {
+      document.getElementById('settingPage').style.display = "block";
+    }
+    function isInside(element, x, y) {
+      const rect = element.getBoundingClientRect();
+      return x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom;
+    }
+    const speed = 2.5, delay = 50, moveCharacter = {
+      up: 0,
+      left: 0,
+      right: 0,
+      down: 0
+    };
+
+    let x = 0, y = 0, coordinateInterval, centerCoordinate = [0, 0], widthInVw, heigthInVw, mapBorder = 0;
+    document.body.onload = () => {
+      document.getElementById('body').style.border = mapBorder + 'px solid black';
+      function coordinate() {
+        document.getElementById('character').style.transform = `translate(${x}vw, ${y}vw)`;
+        document.querySelector('#coordinate span').textContent = `${x / 10 - centerCoordinate[0]}, ${-y / 10 - centerCoordinate[1]}`;
+        if (45 - x - (mapBorder / document.documentElement.clientWidth) * 100 <= 0 && map()[0] - 10 + (mapBorder / document.documentElement.clientWidth) * 100 - x >= 45)
+          document.body.style.marginLeft = 45 - x - (mapBorder / document.documentElement.clientWidth) * 100 + "vw";
+        else if (45 - x <= 0)
+          document.body.style.marginLeft = -(map()[0] - 100 + (mapBorder * 2 / document.documentElement.clientWidth) * 100) + "vw";
+        else
+          document.body.style.marginLeft = 0;
+        if ((-y - 5 - (mapBorder / document.documentElement.clientWidth) * 100) + document.documentElement.clientHeight / 2 * 100 / document.documentElement.clientWidth <= 0 && map()[1] - 10 + (mapBorder / document.documentElement.clientWidth) * 100 - y >= (document.documentElement.clientHeight / 2 / document.documentElement.clientWidth) * 100 - 5)
+          document.body.style.marginTop = "calc((" + (-y - 5 - (mapBorder / document.documentElement.clientWidth) * 100) + "vw) + 50vh)";
+        else if ((document.documentElement.clientHeight / 2 / document.documentElement.clientWidth) * 100 - 5 - y <= 0)
+          document.body.style.marginTop = -map()[1] + (document.documentElement.clientHeight / document.documentElement.clientWidth) * 100 - (mapBorder * 2 / document.documentElement.clientWidth) * 100 + "vw";
+        else document.body.style.marginTop = 0;
+      }
+      function map() {
+        var widthInVw = document.getElementById('body').clientWidth * 100 / document.documentElement.clientWidth;
+        heigthInVw = document.getElementById('body').clientHeight * 100 / document.documentElement.clientWidth;
+        return [Math.round(widthInVw), Math.round(heigthInVw)];
+      }
+      //centerCoordinate = [15, -15];
+      x = centerCoordinate[0] * 10;
+      y = -centerCoordinate[1] * 10;
+      coordinate();
+      document.getElementById('load').style.display = 'none';
+      coordinateInterval = setInterval(() => {
+        console.log(1);
+        if (moveCharacter.up == 1) {
+          if (y <= 0) return;
+          y -= speed;
+          coordinate();
+        } else if (moveCharacter.left == 1) {
+          if (x <= 0) return;
+          x -= speed;
+          coordinate();
+        } else if (moveCharacter.right == 1) {
+          if (x >= map()[0] - 10) return;
+          x += speed;
+          coordinate();
+        } else if (moveCharacter.down == 1) {
+          if (y >= map()[1] - 10) return;
+          y += speed;
+          coordinate();
+        }
+      }, delay);
+    }
+    function key(direction) {
+      switch (direction) {
+        case 'ArrowUp':
+          if (moveCharacter.up == 1) break;
+          stop();
+          moveCharacter.up = 1;
+
+          break;
+        case 'ArrowLeft':
+          if (moveCharacter.left == 1) break;
+          stop();
+          moveCharacter.left = 1;
+
+          break;
+        case 'ArrowRight':
+          if (moveCharacter.right == 1) break;
+          stop();
+          moveCharacter.right = 1;
+
+          break;
+        case 'ArrowDown':
+          if (moveCharacter.down == 1) break;
+          stop();
+          moveCharacter.down = 1;
+
+          break;
+      }
+    }
+
+    function handleTouchMove(event) {
+      event.preventDefault();
+
+      const touchX = event.touches[0].clientX;
+      const touchY = event.touches[0].clientY;
+
+      resetButtonColors();
+
+      if (isInside(upButton, touchX, touchY)) {
+        upButton.style.backgroundColor = '#99c2ff';
+        key('ArrowUp');
+      }
+
+      if (isInside(leftButton, touchX, touchY)) {
+        leftButton.style.backgroundColor = '#99c2ff';
+        key('ArrowLeft');
+      }
+
+      if (isInside(rightButton, touchX, touchY)) {
+        rightButton.style.backgroundColor = '#99c2ff';
+        key('ArrowRight');
+      }
+
+      if (isInside(downButton, touchX, touchY)) {
+        downButton.style.backgroundColor = '#99c2ff';
+        key('ArrowDown');
+      }
+    }
+
+    function handleTouchStart(event) {
+      event.preventDefault();
+
+      resetButtonColors();
+
+      const touchX = event.touches[0].clientX;
+      const touchY = event.touches[0].clientY;
+
+      if (isInside(upButton, touchX, touchY)) {
+        upButton.style.backgroundColor = '#99c2ff';
+        key('ArrowUp');
+      } else if (isInside(leftButton, touchX, touchY)) {
+        leftButton.style.backgroundColor = '#99c2ff';
+        key('ArrowLeft');
+      } else if (isInside(rightButton, touchX, touchY)) {
+        rightButton.style.backgroundColor = '#99c2ff';
+        key('ArrowRight');
+      } else if (isInside(downButton, touchX, touchY)) {
+        downButton.style.backgroundColor = '#99c2ff';
+        key('ArrowDown');
+      }
+    }
+
+    function handleTouchEnd() {
+      resetButtonColors();
+    }
+
+    function resetButtonColors() {
+      stop();
+      upButton.style.backgroundColor = '#b3d9ff';
+      leftButton.style.backgroundColor = '#b3d9ff';
+      downButton.style.backgroundColor = '#b3d9ff';
+      rightButton.style.backgroundColor = '#b3d9ff';
+    }
+    function stop() {
+      moveCharacter.up = 0;
+      moveCharacter.left = 0;
+      moveCharacter.right = 0;
+      moveCharacter.down = 0;
+    }
+    function lockFullscreen() {
+      var elem = document.documentElement;
+
+      // Lock fullscreen
+      if (elem.requestFullscreen) {
+        elem.requestFullscreen();
+        if (elem.lockFullscreen) {
+          elem.lockFullscreen(); // Experimental API
+        }
+      } else if (elem.mozRequestFullScreen) {
+        elem.mozRequestFullScreen();
+        if (elem.mozLockFullScreen) {
+          elem.mozLockFullScreen(); // Experimental API
+        }
+      } else if (elem.webkitRequestFullscreen) {
+        elem.webkitRequestFullscreen();
+        if (elem.webkitLockFullscreen) {
+          elem.webkitLockFullscreen(); // Experimental API
+        }
+      } else if (elem.msRequestFullscreen) {
+        elem.msRequestFullscreen();
+        if (elem.msLockFullscreen) {
+          elem.msLockFullscreen(); // Experimental API
+        }
+      }
+    }
+    function UI(title, content) {
+      document.querySelector("body").innerHTML += `
+        <div id="Popup">
+            <div style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(0, 0, 0, 0.3);">
+            </div>
+            <div style="border: 1px solid black; background-color: #ffffff; display: flex; align-items: center; flex-direction: column; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); max-width: 350px; width: 70vw; border-radius: 15px; user-select: none;">
+                <div style="overflow: hidden; text-overflow: ellipsis; border: 1px solid black; padding-left: 10px; padding-right: 40px; width: calc(100% - 50px); height: 50px; line-height: 50px; background-color: dodgerblue; color: #ffffff; font-weight: bold; border-top-left-radius: 15px; border-top-right-radius: 15px; text-align: center;">
+                    ${title}</div>
+                <div style="overflow-y: auto; width: calc(100% - 30px); min-height: 80px; max-height: 80vh; padding: 15px; word-wrap: break-word;">
+                    ${content.replace(/\n/g, '<br>')}</div>
+                <p onclick="document.querySelector('#Popup').remove()" style="position: absolute; margin: 0; top: 10px; right: 10px; border-radius: 5px; background-color: red; width: 30px; height: 30px; line-height: 30px; text-align: center; color: #ffffff; border: 1px solid black;">X</p>
+            </div>
+        </div>
+        `;
+    }
+  </script>
+</body>
+
+</html>
