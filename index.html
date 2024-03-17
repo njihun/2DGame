@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/mdbassit/Coloris@latest/dist/coloris.min.css"/>
+<script src="https://cdn.jsdelivr.net/gh/mdbassit/Coloris@latest/dist/coloris.min.js"></script>
+  <script>
+Coloris({
+  // The default behavior is to append the color picker's dialog to the end of the document's
+  // body. but it is possible to append it to a custom parent instead. This is especially useful
+  // when the color fields are in a scrollable container and you want the color picker's dialog
+  // to remain anchored to them. You will need to set the CSS position of the desired container
+  // to "relative" or "absolute".
+  // Note: This should be a scrollable container with enough space to display the picker.
+  parent: '.demo',
+
+  // A custom selector to bind the color picker to. This must point to HTML input fields.
+  el: '.color-field',
+
+  // The bound input fields are wrapped in a div that adds a thumbnail showing the current color
+  // and a button to open the color picker (for accessibility only). If you wish to keep your
+  // fields unaltered, set this to false, in which case you will lose the color thumbnail and
+  // the accessible button (not recommended).
+  // Note: This only works if you specify a custom selector to bind the picker (option above),
+  // it doesn't work on the default [data-coloris] attribute selector.
+  wrap: true,
+
+  // Set to true to activate basic right-to-left support.
+  rtl: false,
+
+  // Available themes: default, large, polaroid, pill (horizontal).
+  // More themes might be added in the future.
+  theme: 'polaroid',
+
+  // Set the theme to light or dark mode:
+  // * light: light mode (default).
+  // * dark: dark mode.
+  // * auto: automatically enables dark mode when the user prefers a dark color scheme.
+  themeMode: 'auto',
+
+  // The margin in pixels between the input fields and the color picker's dialog.
+  margin: 2,
+
+  // Set the preferred color string format:
+  // * hex: outputs #RRGGBB or #RRGGBBAA (default).
+  // * rgb: outputs rgb(R, G, B) or rgba(R, G, B, A).
+  // * hsl: outputs hsl(H, S, L) or hsla(H, S, L, A).
+  // * auto: guesses the format from the active input field. Defaults to hex if it fails.
+  // * mixed: outputs #RRGGBB when alpha is 1; otherwise rgba(R, G, B, A).
+  format: 'rgb',
+
+  // Set to true to enable format toggle buttons in the color picker dialog.
+  // This will also force the format option (above) to auto.
+  formatToggle: false,
+
+  // Enable or disable alpha support.
+  // When disabled, it will strip the alpha value from the existing color string in all formats.
+  alpha: true,
+
+  // Set to true to always include the alpha value in the color value even if the opacity is 100%.
+  forceAlpha: false,
+
+  // Set to true to hide all the color picker widgets (spectrum, hue, ...) except the swatches.
+  swatchesOnly: false,
+
+  // Focus the color value input when the color picker dialog is opened.
+  focusInput: false,
+
+  // Select and focus the color value input when the color picker dialog is opened.
+  selectInput: true,
+
+  // Show an optional clear button
+  clearButton: false,
+
+  // Set the label of the clear button
+  clearLabel: '초기화',
+
+  // Show an optional close button
+  closeButton: true,
+
+  // Set the label of the close button
+  closeLabel: '닫기',
+
+  // An array of the desired color swatches to display. If omitted or the array is empty,
+  // the color swatches will be disabled.
+  /*swatches: [
+    '#264653',
+    '#2a9d8f',
+    '#e9c46a',
+    'rgb(244,162,97)',
+    '#e76f51',
+    '#d62828',
+    'navy',
+    '#07b',
+    '#0096c7',
+    '#00b4d880',
+    'rgba(0,119,182,0.8)'
+  ],*/
+
+  // Set to true to use the color picker as an inline widget. In this mode the color picker is
+  // always visible and positioned statically within its container, which is by default the body
+  // of the document. Use the "parent" option to set a custom container.
+  // Note: In this mode, the best way to get the picked color, is listening to the "coloris:pick"
+  // event and reading the value from the event detail (See example in the Events section). The
+  // other way is to read the value of the input field with the id "clr-color-value".
+  inline: false,
+
+  // In inline mode, this is the default color that is set when the picker is initialized.
+  defaultColor: '#000000',
+
+  // A function that is called whenever a new color is picked. This defaults to an empty function,
+  // but can be set to a custom one. The selected color and the current input field are passed to
+  // the function as arguments.
+  // Use in instances (described below) to perform a custom action for each instance. 
+  onChange: (color, input) => undefined
+});
+      /*Coloris({
+        parent: '.demo',
+        theme: 'polaroid',     //default, large, polaroid, pill
+        themeMode: 'light',   //light , dark 모드
+        margin: 2,            //입력 필드와 색선택시 사이 여백
+        alpha: true,          //불투명도 조절
+        format: 'rgb',        //포맷  hex rgb hsl auto mixed
+        formatToggle: false,   //포맷 토글
+        clearButton: true,
+        clearLabel: 'Clear',
+        swatches: [
+          '#264653',
+          '#2a9d8f',
+          '#e9c46a',
+          'rgb(244,162,97)',
+          '#e76f51',
+          '#d62828',
+          'navy',
+          '#07b',
+          '#0096c7',
+          '#00b4d880',
+          'rgba(0,119,182,0.8)'
+        ],
+        inline: false,
+        defaultColor: '#000000',
+      });*/
+  </script>
+  <style>
+    #top-bar {
+      display: flex;
+      background-color: rgba(0,79,149);
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 80px;
+    }
+
+    .tools {
+      display: flex;
+      align-items: center;
+      width: 270px;
+      margin-left: 50px;
+      text-align: center;
+      line-height: 60px;
+    }
+    .tools > *:not(#pen) {
+      margin: 0 auto;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      border: 2px solid black;
+      background: conic-gradient(#fff 25%, #ddd 25% 50%, 
+		#fff 50% 75%, #ddd 75%);
+	    background-size: 40px 40px;
+    }
+    #pen {
+      position: absolute;
+      margin-left: 15px;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      border: 0;
+    }
+
+    .color-picker {
+      position: absolute;
+      right: 0;
+      display: flex;
+      align-items: center;
+      width: 300px;
+      height: 100%;
+    }
+
+    .color-picker > * {
+      height: 70%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      margin: 0 auto;
+    }
+    
+    .container {
+      width: 100vw;
+      height: calc(100vh - 80px);
+      margin-top: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .container span {
+      width: calc(100vh - 100px);
+      height: calc(100vh - 100px);
+      display: grid;
+      grid-template-columns: repeat(10, calc((100vh - 100px) / 10));
+      grid-template-rows: repeat(10, calc((100vh - 100px) / 10));
+      border: 0.1px solid black;
+      background: conic-gradient(#fff 25%, #ddd 25% 50%, 
+		#fff 50% 75%, #ddd 75%);
+	    background-size: calc((100vh - 100px) / 10 * (2 / 3)) calc((100vh - 100px) / 10 * (2 / 3));
+    }
+    
+    .container span div {
+      background-color: red;
+      border: 0.1px solid black;
+    }
+  </style>
+</head>
+<body style="margin: 0;">
+  <div id="top-bar">
+    <div class="tools">
+      <span class="tool" id="pen" onclick="toolSet('penCover');">pen</span>
+      <span id="penCover"></span>
+      <span class="tool" id="eraser" onclick="toolSet('eraser');">erager</span>
+      <span class="tool" id="spoid" onclick="toolSet('spoid');">spoid</span>
+    </div>
+    <div class="color-picker">
+      <span>
+        <span style="color: white;">색상1</span>
+        <span style="color: white;">색상2</span>
+      </span>
+      <span>
+        <INPUT TYPE="TEXT" DATA-COLORIS>
+        <INPUT TYPE="TEXT" DATA-COLORIS>
+      </span>
+      <span>
+        <button onclick="document.getElementById('pen').style.backgroundColor = document.querySelectorAll('.color-picker span input[data-coloris]')[0].value; getRgb(document.getElementById('pen')).every((element)=>{return element>=100})?document.getElementById('pen').style.color = 'black':document.getElementById('pen').style.color = 'white'; if(getRgb(document.getElementById('pen')).length==4&&getRgb(document.getElementById('pen'))[3]<0.45) document.getElementById('pen').style.color = 'black';">선택</button>
+        <button onclick="document.getElementById('pen').style.backgroundColor = document.querySelectorAll('.color-picker span input[data-coloris]')[1].value; getRgb(document.getElementById('pen')).every((element)=>{return element>=100})?document.getElementById('pen').style.color = 'black':document.getElementById('pen').style.color = 'white'; if(getRgb(document.getElementById('pen')).length==4&&getRgb(document.getElementById('pen'))[3]<0.45) document.getElementById('pen').style.color = 'black';">선택</button>
+      </span>
+    </div>
+  </div>
+  <div class="container"><span></span></div>
+
+  <script>
+    const container = document.querySelector('.container span');
+
+    for (let i = 0; i < 100; i++) {
+      const div = document.createElement('div');
+      container.appendChild(div);
+    }
+    document.getElementById('pen').style.backgroundColor = 'rgb(255, 255, 255)';
+
+    //document.getElementById('spoid').style.background = 'rgb(255, 255, 255)';
+    document.querySelectorAll('.color-picker span input[data-coloris]')[0].value = 'rgb(0, 0, 0)';
+    document.querySelectorAll('.color-picker span input[data-coloris]')[1].value = 'rgb(255, 255, 255)';
+    tool = 'none';
+    function toolSet(params) {
+      if(typeof tool=='undefined'||tool!=(params=='penCover'?'pen':params)){
+        tool = params=='penCover'?'pen':params;
+        document.getElementById("penCover").style.border = "2px solid black";
+        document.getElementById("eraser").style.border = "2px solid black";
+        document.getElementById("spoid").style.border = "2px solid black";
+        document.getElementById(params).style.border = "2px solid aqua";
+      }else if(tool==(params=='penCover'?'pen':params)){
+        tool = 'none';
+        document.getElementById(params).style.border = "2px solid black";
+      }
+    }
+    blocks = document.querySelectorAll('.container span div');
+    Array.from(blocks).forEach((block, index) => {
+      block.style.backgroundColor = 'rgba(0, 0, 0, 0)';
+      block.addEventListener('click', () => {
+        if (tool == 'pen') {
+          block.style.backgroundColor = document.getElementById('pen').style.backgroundColor;
+        } else if (tool == 'eraser') {
+          block.style.backgroundColor = 'rgba(0, 0, 0, 0)';
+        } else if (tool == 'spoid') {
+          document.getElementById('pen').style.backgroundColor = block.style.backgroundColor;
+          getRgb(document.getElementById('pen')).every((element)=>{return element>=100})?document.getElementById('pen').style.color = 'black':document.getElementById('pen').style.color = 'white';
+          if(getRgb(document.getElementById('pen')).length==4&&getRgb(document.getElementById('pen'))[3]<0.45) document.getElementById('pen').style.color = 'black';
+        }
+        console.log(tool, block.style.backgroundColor);
+      });
+    });
+    function getRgb(params){
+      return params.style.backgroundColor.split('(')[1].split(')')[0].split(',').map((element)=>{return Number(element.trim());});
+    }
+  </script>
+</body>
+</html>
