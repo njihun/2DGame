@@ -93,6 +93,7 @@
 </head>
 
 <body>
+    <button onclick="lockFullscreen();">전환</button>
     <div id="guide">
         <div>
             가로모드로 전환해주세요
@@ -110,6 +111,34 @@
     </div>
     <a class="advertisement" id="bottom" href="https://playstore.me/1eb3549" target="_blank"><img
             style="vertical-align: top;" width="100%" height="100%" src="./img/advertisement.jpg"></a>
+    <script>//😊
+        function lockFullscreen() {
+    var elem = document.documentElement;
+
+    // Lock fullscreen
+    if (elem.requestFullscreen) {
+        elem.requestFullscreen();
+        if (elem.lockFullscreen) {
+            elem.lockFullscreen(); // Experimental API
+        }
+    } else if (elem.mozRequestFullScreen) {
+        elem.mozRequestFullScreen();
+        if (elem.mozLockFullScreen) {
+            elem.mozLockFullScreen(); // Experimental API
+        }
+    } else if (elem.webkitRequestFullscreen) {
+        elem.webkitRequestFullscreen();
+        if (elem.webkitLockFullscreen) {
+            elem.webkitLockFullscreen(); // Experimental API
+        }
+    } else if (elem.msRequestFullscreen) {
+        elem.msRequestFullscreen();
+        if (elem.msLockFullscreen) {
+            elem.msLockFullscreen(); // Experimental API
+        }
+    }
+}
+    </script>
 </body>
 
 </html>

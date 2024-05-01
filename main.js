@@ -17,7 +17,12 @@ function isInside(element, x, y) {
     const rect = element.getBoundingClientRect();
     return x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom;
 }
-const speed = 2.5, delay = 5, moveCharacter = {
+const speed = 2.5, delay = 5,
+animationSpeed = {
+    walk: 50,
+    run: 17
+},
+moveCharacter = {
     up: 0,
     left: 0,
     right: 0,
@@ -85,13 +90,14 @@ document.body.onload = () => {
             return;
         } else {
             function charDelayFunc() {
-                //달리기 9~15 걷기 23~29
+                //달리기 9~15 걷기 23~29 1칸당 1m 기준
+                //달리기 17~ 걷기 50~ 1칸당 0.5m 기준
                 switch (animation) {
                     case 'walk':
-                        charDelay = 29;
+                        charDelay = animationSpeed.walk;
                         break;
                     case 'run':
-                        charDelay = 15;
+                        charDelay = animationSpeed.run;
                         break;
                     default:
                         throw Error(`No animation found. => "${animation}"`);
@@ -223,7 +229,7 @@ function handleTouchStart(event) {
             leftButtonTouch -= 1;
         }, 500);
     } else if (isInside(rightButton, touchX, touchY)) {
-        rightButton.style.backgroundColor = '#99c2ff';
+        rightButton.style.backgroundColor = '#99c2ff'; 
         key('ArrowRight');
         if (rightButtonTouch <= 0) rightButtonTouch = 1;
         else rightButtonTouch += 1;
@@ -243,10 +249,11 @@ function handleTouchStart(event) {
     }
     if (upButtonTouch > 1 || leftButtonTouch > 1 || rightButtonTouch > 1 || downButtonTouch > 1) {
         animation = 'run';
+        charDelay = Math.round(((1 - 1 / animationSpeed.walk * charDelay) / (1 / animationSpeed.run)).toFixed(1))+1;
         upButtonTouch = 0;
-            leftButtonTouch = 0;
-            rightButtonTouch = 0;
-            downButtonTouch = 0;
+        leftButtonTouch = 0;
+        rightButtonTouch = 0;
+        downButtonTouch = 0;
     }
 }
 function handleTouchEnd() {
@@ -313,8 +320,8 @@ function perHour(x, y, delay) {
         perHourX = x;
         perHourY = y;
     }
-    //1칸당 1m
-    result = (Math.sqrt(Math.pow(x / 10 - perHourX / 10, 2) + Math.pow(y / 10 - perHourY / 10, 2)) / (delay / 1000) * 3.6).toFixed(2);
+    //1칸당 0.5m
+    result = (Math.sqrt(Math.pow(x / 10 - perHourX / 10, 2) + Math.pow(y / 10 - perHourY / 10, 2)) * 2 / (delay / 1000) * 3.6).toFixed(2);
     perHourX = x;
     perHourY = y;
     return result;
