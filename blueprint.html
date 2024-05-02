@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <meta name="viewport" content="user-scalable=no, width=device-width"/>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/mdbassit/Coloris@latest/dist/coloris.min.css"/>
 <script src="https://cdn.jsdelivr.net/gh/mdbassit/Coloris@latest/dist/coloris.min.js"></script>
   <script>
@@ -66,7 +67,7 @@ Coloris({
   focusInput: false,
 
   // Select and focus the color value input when the color picker dialog is opened.
-  selectInput: true,
+  selectInput: false,
 
   // Show an optional clear button
   clearButton: false,
@@ -209,12 +210,12 @@ Coloris({
       width: calc(100vh - 100px);
       height: calc(100vh - 100px);
       display: grid;
-      grid-template-columns: repeat(10, calc((100vh - 100px) / 10));
-      grid-template-rows: repeat(10, calc((100vh - 100px) / 10));
+      grid-template-columns: repeat(20, calc((100vh - 100px) / 20));
+      grid-template-rows: repeat(20, calc((100vh - 100px) / 20));
       border: 0.1px solid black;
       background: conic-gradient(#fff 25%, #ddd 25% 50%, 
 		#fff 50% 75%, #ddd 75%);
-	    background-size: calc((100vh - 100px) / 10 * (2 / 3)) calc((100vh - 100px) / 10 * (2 / 3));
+	    background-size: calc((100vh - 100px) / 20 * (2 / 3)) calc((100vh - 100px) / 20 * (2 / 3));
     }
     
     .container span div {
@@ -237,8 +238,8 @@ Coloris({
         <span style="color: white;">색상2</span>
       </span>
       <span>
-        <INPUT TYPE="TEXT" DATA-COLORIS>
-        <INPUT TYPE="TEXT" DATA-COLORIS>
+        <INPUT TYPE="TEXT" DATA-COLORIS readonly>
+        <INPUT TYPE="TEXT" DATA-COLORIS readonly>
       </span>
       <span>
         <button onclick="document.getElementById('pen').style.backgroundColor = document.querySelectorAll('.color-picker span input[data-coloris]')[0].value; getRgb(document.getElementById('pen')).every((element)=>{return element>=100})?document.getElementById('pen').style.color = 'black':document.getElementById('pen').style.color = 'white'; if(getRgb(document.getElementById('pen')).length==4&&getRgb(document.getElementById('pen'))[3]<0.45) document.getElementById('pen').style.color = 'black';">선택</button>
@@ -251,7 +252,7 @@ Coloris({
   <script>
     const container = document.querySelector('.container span');
 
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 400; i++) {
       const div = document.createElement('div');
       container.appendChild(div);
     }
@@ -273,10 +274,30 @@ Coloris({
         document.getElementById(params).style.border = "2px solid black";
       }
     }
+
+    document.querySelector('.container').addEventListener('touchmove', ()=>{
+      var touch = event.touches[0];
+      var touchX = touch.clientX;
+      var touchY = touch.clientY;
+      var elementTouchIsOver = document.elementFromPoint(touchX, touchY);
+      if(elementTouchIsOver.closest('.container span')==null) return;
+      //elementTouchIsOver.style.backgroundColor = 'red';
+    if (tool == 'pen') {
+        elementTouchIsOver.style.backgroundColor = document.getElementById('pen').style.backgroundColor;
+      } else if (tool == 'eraser') {
+        elementTouchIsOver.style.backgroundColor = 'rgba(0, 0, 0, 0)';
+      } else if (tool == 'spoid') {
+        document.getElementById('pen').style.backgroundColor = elementTouchIsOver.style.backgroundColor;
+        getRgb(document.getElementById('pen')).every((element)=>{return element>=100})?document.getElementById('pen').style.color = 'black':document.getElementById('pen').style.color = 'white';
+        if(getRgb(document.getElementById('pen')).length==4&&getRgb(document.getElementById('pen'))[3]<0.45) document.getElementById('pen').style.color = 'black';
+      }
+      console.log(tool, elementTouchIsOver.style.backgroundColor);
+      
+    });
     blocks = document.querySelectorAll('.container span div');
     Array.from(blocks).forEach((block, index) => {
       block.style.backgroundColor = 'rgba(0, 0, 0, 0)';
-      block.addEventListener('click', () => {
+      block.addEventListener('touchstart', () => {
         if (tool == 'pen') {
           block.style.backgroundColor = document.getElementById('pen').style.backgroundColor;
         } else if (tool == 'eraser') {
